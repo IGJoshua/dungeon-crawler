@@ -1,5 +1,5 @@
 {:paths ["src" "resources"]
- :deps {org.clojure/clojure {:mvn/version "1.10.3"}
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
         ht.sr.srasu/s-expresso {:git/url "https://git.sr.ht/~srasu/s-expresso"
                                 :git/sha "569aa6b3969613b97d9c049b4471a6d01cf73b54"}
         io.github.IGJoshua/cljsl {:git/sha "5d8bc2bfccb2bc05a5075564d3802919ba9052d8"}
@@ -25,5 +25,6 @@
          :extra-deps {org.clojure/test.check {:mvn/version "1.1.1"}
                       io.github.cognitect-labs/test-runner {:git/tag "v0.5.0" :git/sha "48c3c67"}}}
 
-  :build {:deps {io.github.clojure/tools.build {:git/tag "v0.3.0" :git/sha "e418fc9"}}
+  :build {:deps {org.clojure/clojure {:mvn/version "1.11.1"}
+                 io.github.clojure/tools.build {:git/tag "v0.3.0" :git/sha "e418fc9"}}
           :ns-default build}}}
