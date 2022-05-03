@@ -1,5 +1,6 @@
 {:paths ["src" "resources"]
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        org.clojure/tools.logging {:mvn/version "1.1.0"}
         ht.sr.srasu/s-expresso {:git/url "https://git.sr.ht/~srasu/s-expresso"
                                 :git/sha "569aa6b3969613b97d9c049b4471a6d01cf73b54"}
         io.github.IGJoshua/cljsl {:git/sha "5d8bc2bfccb2bc05a5075564d3802919ba9052d8"}
