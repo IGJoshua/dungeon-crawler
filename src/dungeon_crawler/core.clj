@@ -93,9 +93,12 @@
                    (last
                     (filter (comp #{:move} :action)
                             (:mouse input-events))))
-        close? (seq
-                (filter (comp #{:close} :action)
-                        (:window input-events)))]
+        close? (or (some #(and (= :escape (:key %))
+                               (= :press (:action %)))
+                         (:keyboard input-events))
+                (seq
+                    (filter (comp #{:close} :action)
+                            (:window input-events))))]
     (cond-> game-state
       mouse-pos (assoc :mouse-pos mouse-pos)
       close? (assoc ::eng/should-close? close?))))
