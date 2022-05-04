@@ -1,0 +1,46 @@
+#+TITLE: Game Plan
+
+
+* Fundamentals
+The minimum requirements to have a playable dungeon crawler:
+** The Scene
+The world is a flat plain of cells in a grid. Cells can contain the player and potentially one or more other objects.
+*** Ground
+The ground is going to be one of several different terrain types:
+- Base ground (for example grass or cobblestone)
+- Ground that can potentially impede movement (for example, cannot move in water without having swimming training/item like flippers)
+
+*** Objects
+Objects can have any combination of the following potential properties:
+- Obstacles: These are things like walls, but don't necessarily have to be vertical.
+- Interact-able: Potentially can be pressed when on the same space or facing it on an adjacent space, causing changes such as making a door object no longer an obstacle.
+  For simplicity, no space should have more than one item initially.
+- Decorative: Can move through them, are largely visual. Other objects potentially interact with them, for example a table in a cell might have an item on it, but the only thing to use is the item.
+- Potentially a representation of an enemy--see discussion on [[Combat]]
+** Movement
+In these games the people you represent are typically a group of characters traveling as a party, but for simplicity I will just refer to their perspective as the player. The player moves through the world discretely, only ever in one cell of the world at a time. They move from one space to the next, and have the ability to also turn 90 degrees to face other directions. Mouse look might be possible as well for getting a good perspective of the surrounding area, but otherwise can be restricted to right angles.
+
+** Mapping
+The older style dungeon crawlers expected you to map the game yourself. More modern ones either provide an automap, or do the Etrian Odyssey style--
+they show you a grid and fill in tiles you walk on, but it is up to you to add walls, items, notes, etc. I'm more partial to this latter style, as it makes the exploration a lot more exciting. This would require a 2d layout that can be filled in by clicking on dragging on it lines like a paint utility, and everything snapping to a grid that is the size of the world you are presently in.
+** Combat
+Virtually all these games have combat. There are two styles that can be handled. One is to have the enemies actually on the map, and you fight them by using abilities from menus/key presses, enemies move and take turns after the player.
+
+The alternative is more common, which is a separate battle screen in the style of Pokemon or other JRPG games with a turn based combat system separate from the world screen itself. This allows for just sprites for the enemies, and potentially a more sophisticated combat system. My favorite version incorporates the latter, with major enemies visible on the map (and the possibility that after a round of combat they may move their position on the screen and even join the existing battle).
+
+The actual implementation of battle and similar might be a lot more to chew off than we can do, but it would be worth considering these two styles before starting one other the other.
+* Sound
+Very likely common and basic actions need some sound to just give them more impact. A different sound for walking on different tiles, and likely a sound for
+interacting with objects. Probably not the immediate priority.
+* Animation
+I suspect this is not something we will need to have in this game. If anything it would just be for nicer visuals. Trees swaying in the background or similar. If combat is actually implemented, potentially with sprites, that may be the best use for animation, and that could be 2D.
+* Overall game loop:
+1. Wait for player input. Any updates to the map can be done at any phase and are not blocking by the player.
+2. If it is related to display information, do so, then on confirmation switch to 1. (menus to display inventory, etc.)
+3. If it is an action, perform said action.
+4. Update known map.
+5. If enemies, they may move.
+6. Check for possible combat, perform combat if so.
+7. Loop back
+
+If a tile is moved onto that contains a staircase, ladder, etc. may lead to loading a new scene.
