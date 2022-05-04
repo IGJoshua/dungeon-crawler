@@ -2,7 +2,7 @@
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
         org.clojure/tools.logging {:mvn/version "1.1.0"}
         ht.sr.srasu/s-expresso {:git/url "https://git.sr.ht/~srasu/s-expresso"
-                                :git/sha "0ffbb21cac64a8aad5f98e4cd8bf331e57a8ee34"}
+                                :git/sha "1ff02a684b9e4e2b401c27bdb4bdd551000091b0"}
         io.github.IGJoshua/cljsl {:git/sha "5d8bc2bfccb2bc05a5075564d3802919ba9052d8"}
 
         net.mikera/core.matrix {:mvn/version "0.62.0"}
