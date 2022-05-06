@@ -24,6 +24,15 @@
                                 ::size-y
                                 ::cells]))
 
+(def ^:private level-map
+  {:sample-level (delay (clojure.edn/read-string (slurp "resources/sample_level.edn")))})
+
+(defn get-level
+  "This function takes in a keyword `level` and returns a map with all the details from
+  that level where they are stored."
+  [level]
+  @(level level-map))
+
 (def sample-level
   "this is intended just to be used for testing and not a permanent definition.
   For now contains just the cells, but can also potentially include information

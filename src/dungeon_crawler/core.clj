@@ -1,6 +1,7 @@
 (ns dungeon-crawler.core
   (:require
    [clojure.tools.logging :as log]
+   [dungeon-crawler.levels :refer [get-level]]
    [s-expresso.ecs :as ecs]
    [s-expresso.engine :as eng]
    [s-expresso.resource :as res]
