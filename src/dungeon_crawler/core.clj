@@ -1,7 +1,7 @@
 (ns dungeon-crawler.core
   (:require
    [clojure.tools.logging :as log]
-   [dungeon-crawler.levels :refer [get-level]]
+   [dungeon-crawler.levels :refer [load-level]]
    [s-expresso.ecs :as ecs]
    [s-expresso.engine :as eng]
    [s-expresso.resource :as res]
@@ -86,6 +86,51 @@
   (res/free wnd)
   (reset! window nil))
 
+;; TODO: Needs to account for obstacles
+;; TODO: Potentially instead of just returning game-state, if a movement fails,
+;; may want to play a sound or give some other form of interaction.
+(defn player-input
+  "This processes the player's movement. If the player turns left or right,
+  this does not consume their action, but moving should."
+  [game-state event]
+  (let [player-uuid (:player game-state)
+        player (get-in game-state [::ecs/entities player-uuid])]
+    (case (:key event)
+      :left (assoc-in game-state [::ecs/entities player-uuid :facing]
+                      ((:facing player) {:north :west
+                                         :west :south
+                                         :south :east
+                                         :east :north}))
+      :right (assoc-in game-state [::ecs/entities player-uuid :facing]
+                        ((:facing player) {:north :east
+                                           :east :south
+                                           :south :west
+                                           :west :north}))
+      :up (let [new-pos (mapv #(+ %1 %2)
+                              (:position player)
+                              (case (:facing player)
+                                :north [0 -1]
+                                :west [-1 0]
+                                :south [0 1]
+                                :east  [1 0]))
+                tile? (get-in game-state [:level :cells new-pos])]
+            (if tile?
+              (assoc-in game-state [::ecs/entities player-uuid :position]
+                        new-pos)
+              game-state))
+      :down (let [new-pos (mapv #(+ %1 %2)
+                                (:position player)
+                                (case (:facing player)
+                                       :north [0 1]
+                                       :west [1 0]
+                                       :south [0 1]
+                                       :east [1 0]))
+                  tile? (get-in game-state [:level :cells new-pos])]
+              (if tile?
+                (assoc-in game-state [::ecs/entities player-uuid :position]
+                          new-pos)
+                game-state)))))
+
 (defn ingest-input
   [game-state _dt]
   (let [[input-events] (reset-vals! input-events [])
@@ -94,6 +139,10 @@
                    (last
                     (filter (comp #{:move} :action)
                             (:mouse input-events))))
+        player-movement? (last
+                          (filter #(and (= :press (:action %))
+                                        (#{:left :right :up :down} (:key %)))
+                                  (:keyboard input-events)))
         close? (or (some #(and (= :escape (:key %))
                                (= :press (:action %)))
                          (:keyboard input-events))
@@ -101,6 +150,7 @@
                          (:window input-events)))]
     (cond-> game-state
       mouse-pos (assoc :mouse-pos mouse-pos)
+      player-movement? (player-input player-movement?)
       close? (assoc ::eng/should-close? close?))))
 
 (def game-systems [#'ingest-input])
@@ -118,10 +168,14 @@
 (def render-systems [#'clear-screen])
 
 (def init-game-state
-  {::ecs/entities {}
-   ::ecs/systems #'game-systems
-   ::ecs/events []
-   ::rnd/systems #'render-systems})
+  (let [player (ecs/next-entity-id)]
+    {::ecs/entities {player {:facing :north
+                             :position [11 9]}}
+     ::ecs/systems #'game-systems
+     ::ecs/events []
+     :player player
+     :level (load-level "sample_level")
+     ::rnd/systems #'render-systems}))
 
 (def init-render-state
   {::rnd/resolvers {}
