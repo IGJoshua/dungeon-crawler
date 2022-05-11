@@ -99,3 +99,11 @@
                 [0 (/ half-height) 0 0]
                 [0 0 (/ -2 (- far near)) (/ (* -1 (+ far near)) (- far near))]
                 [0 0 0 1]])))
+
+(defmacro with-reference-frame
+  [frame mats & body]
+  (let [frame-inv-sym (gensym)]
+    `(let [frame# ~frame
+           ~frame-inv-sym (mat/inverse frame#)
+           ~@(mapcat #(-> [% `(mat/mmul ~frame-inv-sym ~%)]) mats)]
+       (mat/mmul frame# (do ~@body)))))
