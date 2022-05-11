@@ -24,11 +24,14 @@ In these games the people you represent are typically a group of characters trav
 The older style dungeon crawlers expected you to map the game yourself. More modern ones either provide an automap, or do the Etrian Odyssey style--
 they show you a grid and fill in tiles you walk on, but it is up to you to add walls, items, notes, etc. I'm more partial to this latter style, as it makes the exploration a lot more exciting. This would require a 2d layout that can be filled in by clicking on dragging on it lines like a paint utility, and everything snapping to a grid that is the size of the world you are presently in.
 ** Combat
-Virtually all these games have combat. There are two styles that can be handled. One is to have the enemies actually on the map, and you fight them by using abilities from menus/key presses, enemies move and take turns after the player.
+Separate battle happens in a turn based fashion, rather than monsters being directly present on the world moving. Scarier monsters can potentially be seen on the map, but the battles are handled in a JRPG style.
 
-The alternative is more common, which is a separate battle screen in the style of Pokemon or other JRPG games with a turn based combat system separate from the world screen itself. This allows for just sprites for the enemies, and potentially a more sophisticated combat system. My favorite version incorporates the latter, with major enemies visible on the map (and the possibility that after a round of combat they may move their position on the screen and even join the existing battle).
+The main draw in these games is a sense of uncovering the next area and exploration, and combat is what makes that dangerous and something you question whether you should go back or push forwards a little more. The combat should also be reasonably interesting in its own right, however a lot of the following is suggested as a potential way to avoid complex systems.
 
-The actual implementation of battle and similar might be a lot more to chew off than we can do, but it would be worth considering these two styles before starting one other the other.
+The player's party deals damage each to party level, no stats. Each party member is able to nullify one type of damage, takes twice as much damage from one, and regular damage from others.
+
+Special skills will allow the player to adjust the order party members block in, or potentially even double up, move party members out entirely. I'm imagining a bit of a Rondel with all the characters.
+
 * Sound
 Very likely common and basic actions need some sound to just give them more impact. A different sound for walking on different tiles, and likely a sound for
 interacting with objects. Probably not the immediate priority.

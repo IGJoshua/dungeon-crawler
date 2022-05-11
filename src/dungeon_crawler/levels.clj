@@ -1,7 +1,7 @@
 (ns dungeon-crawler.levels
-  (:require [dungeon-crawler.config :refer [config]]
-            [clojure.java.io :as io]
-            [clojure.spec.alpha :as s]))
+  (:require [clojure.java.io :as io]
+            [clojure.spec.alpha :as s]
+            [dungeon-crawler.config :refer [config]]))
 
 (def ^:private level-map (atom {}))
 

@@ -5,6 +5,10 @@
 
 (mat/set-current-implementation :vectorz)
 
+(def compose mat/mmul)
+
+(def inverse mat/inverse)
+
 (defn translation
   ([pos]
    (let [ret (mat/clone (mat/identity-matrix 4))]
