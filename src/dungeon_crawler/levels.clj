@@ -50,7 +50,7 @@
   (let [i (* 4 index)
         x' (:cell-size-x config)
         y' (:cell-size-y config)]
-    {:layout [i (+ 2.0 i) (inc i) (+ 2.0 i) (+ 3.0 i) (inc i)]
+    {:layout [i (+ 2 i) (inc i) (+ 2 i) (+ 3 i) (inc i)]
      :position [{:pos [x y 0.0]}
                 {:pos [(+ x x') y 0.0]}
                 {:pos [x (+ y y') 0.0]}

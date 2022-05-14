@@ -1,9 +1,12 @@
 (ns dungeon-crawler.core
   (:require
    [clojure.tools.logging :as log]
-   [dungeon-crawler.levels :refer [load-level]]
+   [dungeon-crawler.levels :refer [load-level build-floor]]
+   [dungeon-crawler.shaders :refer [basic-shader]]
    [s-expresso.ecs :as ecs]
    [s-expresso.engine :as eng]
+   [s-expresso.memory :refer [with-heap-allocator]]
+   [s-expresso.mesh :as m]
    [s-expresso.resource :as res]
    [s-expresso.render :as rnd]
    [s-expresso.window :as wnd])
@@ -176,6 +179,19 @@
      :player player
      :level (load-level "sample_level")
      ::rnd/systems #'render-systems}))
+
+(def floor-mesh-layout
+  {:buffer-layouts [{:attrib-layouts [{:name :pos
+                                       :type :float
+                                       :count 3}]}]
+   :element-type :triangles
+   :indices {:type :uint}})
+
+(def floor-mesh
+  (with-heap-allocator
+    (future
+      (let [mesh (m/pack-verts floor-mesh-layout (build-floor (:level init-game-state)))]
+        (delay (m/make-mesh floor-mesh-layout mesh))))))
 
 (def init-render-state
   {::rnd/resolvers {}
