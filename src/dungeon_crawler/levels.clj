@@ -43,3 +43,34 @@
     (let [data (read-map level)]
       (swap! level-map assoc level data)
       data)))
+
+(defn- build-quad
+  [index
+   [x y]]
+  (let [i (* 4 index)
+        x' (:cell-size-x config)
+        y' (:cell-size-y config)]
+    {:layout [i (+ 2.0 i) (inc i) (+ 2.0 i) (+ 3.0 i) (inc i)]
+     :position [{:pos [x y 0.0]}
+                {:pos [(+ x x') y 0.0]}
+                {:pos [x (+ y y') 0.0]}
+                {:pos [(+ x x') (+ y y') 0.0]}]}))
+
+(defn build-floor
+  "This function takes a `level` and returns a map containing the vertices
+  and layouts for that level's floor."
+  [level]
+  (loop [i 0
+         size-x (:cell-size-x config)
+         size-y (:cell-size-y config)
+         results {:vertices [] :indices []}
+         l (:cells level)]
+    (if (empty? l)
+      results
+      (let [[[x y] _v] (first l)
+            q (build-quad i [(* x size-x) (* y size-y)])]
+        (recur (inc i) size-x size-y
+               (-> results
+                   (update :vertices #(apply conj % (:position q)))
+                   (update :indices #(apply conj % (:layout q))))
+               (dissoc l [x y]))))))

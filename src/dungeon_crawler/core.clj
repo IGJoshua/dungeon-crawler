@@ -1,9 +1,7 @@
 (ns dungeon-crawler.core
   (:require
    [clojure.tools.logging :as log]
-   [dungeon-crawler.config :refer [config]]
    [dungeon-crawler.levels :refer [load-level]]
-   [dungeon-crawler.math :as math]
    [s-expresso.ecs :as ecs]
    [s-expresso.engine :as eng]
    [s-expresso.resource :as res]
@@ -156,18 +154,6 @@
       close? (assoc ::eng/should-close? close?))))
 
 (def game-systems [#'ingest-input])
-
-(defn render-floor
-  [game-state _dt]
-  (map (fn [[[x y] _v]]
-         (let [pos-x (* x (:cell-size-x config))
-               pos-y (* y (:cell-size-y config))]
-           (math/compose
-            (math/translation pos-x pos-y 0)
-            (math/scale (:cell-size-x config)
-                        (:cell-size-y config)
-                        1))))
-       (get-in game-state [:level :cells])))
 
 (defn clear-screen
   [_game-state]
