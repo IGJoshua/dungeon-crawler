@@ -9,6 +9,7 @@
    [s-expresso.mesh :as m]
    [s-expresso.resource :as res]
    [s-expresso.render :as rnd]
+   [s-expresso.shader :as sh]
    [s-expresso.window :as wnd])
   (:import
    (org.lwjgl.opengl GL GL45 GLDebugMessageCallback GLDebugMessageCallbackI))
@@ -168,18 +169,6 @@
        (GL45/glClearColor 0.1 0.15 0.2 1.0)
        (GL45/glClear (bit-or GL45/GL_COLOR_BUFFER_BIT GL45/GL_DEPTH_BUFFER_BIT))))))
 
-(def render-systems [#'clear-screen])
-
-(def init-game-state
-  (let [player (ecs/next-entity-id)]
-    {::ecs/entities {player {:facing :north
-                             :position [11 9]}}
-     ::ecs/systems #'game-systems
-     ::ecs/events []
-     :player player
-     :level (load-level "sample_level")
-     ::rnd/systems #'render-systems}))
-
 (def floor-mesh-layout
   {:buffer-layouts [{:attrib-layouts [{:name :pos
                                        :type :float
@@ -187,11 +176,35 @@
    :element-type :triangles
    :indices {:type :uint}})
 
-(def floor-mesh
-  (with-heap-allocator
-    (future
-      (let [mesh (m/pack-verts floor-mesh-layout (build-floor (:level init-game-state)))]
-        (delay (m/make-mesh floor-mesh-layout mesh))))))
+(defn render-floor
+  [game-state]
+  (list (reify rnd/RenderOp
+          (op-deps [_]
+            {::mesh (get-in game-state [::ecs/entities (:level game-state) :mesh-data])
+             ::shader-program basic-shader})
+          (apply-op! [_ {{::keys [mesh shader-program]} ::rnd/resources}]
+            (when (and mesh shader-program)
+              (sh/with-shader-program shader-program
+                (m/draw-mesh mesh)))))))
+
+(def render-systems [#'clear-screen #'render-floor])
+
+(def init-game-state
+  (let [player (ecs/next-entity-id)
+        init-level-id (ecs/next-entity-id)
+        init-level (load-level "sample_level")]
+    {::ecs/entities {player {:facing :north
+                             :position [11 9]}
+                     init-level-id {:mesh-data (with-heap-allocator
+                                                 (future
+                                                   (let [mesh (m/pack-verts floor-mesh-layout (build-floor init-level))]
+                                                     (delay (m/make-mesh floor-mesh-layout mesh)))))
+                                    :level-data init-level}}
+     ::ecs/systems #'game-systems
+     ::ecs/events []
+     :player player
+     :level init-level-id
+     ::rnd/systems #'render-systems}))
 
 (def init-render-state
   {::rnd/resolvers {}

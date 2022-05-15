@@ -5,30 +5,23 @@
   (:require [cljsl.compiler :as c]
             [s-expresso.shader :as sh]))
 
-(c/defparam v-pos "vec3"
-  :layout {"location" 0})
-
-(c/defuniform time "float")
-(c/defparam v-out "float")
+(c/defparam position "vec3")
+(c/defparam color "vec3")
 
 (c/defshader vert-source
-  {v-pos :in
-   time :in
-   v-out :out}
-  (set! gl_Position (vec4 v-pos 1.0))
-  (set! v-out time))
+  {position :in
+   color :out}
+  (set! color (vec3 (+ 0.5 (:x position)) 1.0 (+ 0.5 (:y position))))
+  (set! gl_Position (vec4 position 1.0)))
 
-(c/defparam frag-color "vec4")
+(c/defparam out-color "vec4")
 
 (c/defshader frag-source
-  {v-out :in
-   frag-color :out}
-  (set! frag-color (vec4 0 0 (abs (sin v-out)))))
+  {color :in
+   out-color :out}
+  (set! out-color (vec4 color (float 1.0))))
 
-(def ^:private basic-shader-source
-  [{:source (::c/source vert-source)
-    :stage :vertex}
-   {:source (::c/source frag-source)
-    :stage :fragment}])
-
-(def basic-shader (sh/make-shader-program-from-sources basic-shader-source))
+(def basic-shader #(sh/make-shader-program-from-sources [{:source (::c/source vert-source)
+                                                          :stage :vertex}
+                                                         {:source (::c/source frag-source)
+                                                          :stage :fragment}]))
