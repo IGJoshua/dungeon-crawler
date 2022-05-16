@@ -180,7 +180,8 @@
   [game-state]
   (list (reify rnd/RenderOp
           (op-deps [_]
-            {::mesh (get-in game-state [::ecs/entities (:level game-state) :mesh-data])
+            {::mesh (rnd/resolver [mesh (m/pack-verts floor-mesh-layout (build-floor (:level game-state)))]
+                      (m/make-mesh floor-mesh-layout mesh))
              ::shader-program basic-shader})
           (apply-op! [_ {{::keys [mesh shader-program]} ::rnd/resources}]
             (when (and mesh shader-program)
@@ -191,19 +192,13 @@
 
 (def init-game-state
   (let [player (ecs/next-entity-id)
-        init-level-id (ecs/next-entity-id)
         init-level (load-level "sample_level")]
     {::ecs/entities {player {:facing :north
-                             :position [11 9]}
-                     init-level-id {:mesh-data (with-heap-allocator
-                                                 (future
-                                                   (let [mesh (m/pack-verts floor-mesh-layout (build-floor init-level))]
-                                                     (delay (m/make-mesh floor-mesh-layout mesh)))))
-                                    :level-data init-level}}
+                             :position [11 9]}}
      ::ecs/systems #'game-systems
      ::ecs/events []
      :player player
-     :level init-level-id
+     :level init-level
      ::rnd/systems #'render-systems}))
 
 (def init-render-state
