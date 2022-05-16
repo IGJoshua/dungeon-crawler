@@ -8,11 +8,13 @@
 (c/defparam position "vec3")
 (c/defparam color "vec3")
 
+(c/defuniform view-projection "mat4")
+
 (c/defshader vert-source
   {position :in
    color :out}
   (set! color (vec3 (+ 0.5 (:x position)) 1.0 (+ 0.5 (:y position))))
-  (set! gl_Position (vec4 position 1.0)))
+  (set! gl_Position (* view-projection (vec4 position 1.0))))
 
 (c/defparam out-color "vec4")
 

@@ -1,8 +1,10 @@
 (ns dungeon-crawler.core
   (:require
    [clojure.tools.logging :as log]
+   [clojure.math :refer [PI]]
    [dungeon-crawler.levels :refer [load-level build-floor]]
-   [dungeon-crawler.shaders :refer [basic-shader]]
+   [dungeon-crawler.math :as math]
+   [dungeon-crawler.shaders :refer [basic-shader view-projection]]
    [s-expresso.ecs :as ecs]
    [s-expresso.engine :as eng]
    [s-expresso.memory :refer [with-heap-allocator]]
@@ -176,6 +178,16 @@
    :element-type :triangles
    :indices {:type :uint}})
 
+(def facing->angle
+  {:north (* PI 1/2)
+   :west PI
+   :south (- (* PI 1/2))
+   :east 0})
+
+;; FIXME(Joshua): We need the aspect ratio to update when we do handling of
+;; framebuffer resizes for window resize
+(def aspect-ratio 4/3)
+
 (defn render-floor
   [game-state]
   (list (reify rnd/RenderOp
@@ -186,6 +198,16 @@
           (apply-op! [_ {{::keys [mesh shader-program]} ::rnd/resources}]
             (when (and mesh shader-program)
               (sh/with-shader-program shader-program
+                (let [player (get-in game-state [::ecs/entities (:player game-state)])
+                      eye-height 1
+                      [x z] (:position player)
+                      {:keys [cell-size-x cell-size-y]} (:level game-state)
+                      view (math/compose
+                            (math/translation (* cell-size-x x) eye-height (* cell-size-y z))
+                            (math/revolve-y (facing->angle (:facing player))))
+                      projection (math/perspective-projection (:fov player) aspect-ratio 0.1 1000)
+                      view-proj (math/compose projection view)]
+                  (sh/upload-uniform-matrix4 shader-program (::sh/ident view-projection) view-proj))
                 (m/draw-mesh mesh)))))))
 
 (def render-systems [#'clear-screen #'render-floor])
