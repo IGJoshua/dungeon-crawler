@@ -208,8 +208,14 @@
 (defn run
   []
   (let [window (start-window window-opts)]
-    (try (eng/start-engine window init-game-state init-render-state (/ 60))
-      (finally (shutdown-window window)))))
+    (try (-> window
+             (eng/start-engine init-game-state init-render-state (/ 60))
+             ;; NOTE(Joshua): start-engine returns a vector of the final game
+             ;; state and the final render state. We should free the resources
+             ;; in the render state.
+             second
+             rnd/shutdown-state)
+         (finally (shutdown-window window)))))
 
 (defn -main
   [& args]
