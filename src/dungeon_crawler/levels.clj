@@ -51,10 +51,10 @@
         x' (:cell-size-x config)
         y' (:cell-size-y config)]
     {:layout [i (+ 2 i) (inc i) (+ 2 i) (+ 3 i) (inc i)]
-     :position [{:pos [x y 0.0]}
-                {:pos [(+ x x') y 0.0]}
-                {:pos [x (+ y y') 0.0]}
-                {:pos [(+ x x') (+ y y') 0.0]}]}))
+     :position [{:pos [x 0.0 y]}
+                {:pos [(+ x x') 0.0 y]}
+                {:pos [x 0.0 (+ y y')]}
+                {:pos [(+ x x') 0.0 (+ y y')]}]}))
 
 (defn build-floor
   "This function takes a `level` and returns a map containing the vertices

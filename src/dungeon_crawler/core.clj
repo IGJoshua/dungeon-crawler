@@ -2,6 +2,7 @@
   (:require
    [clojure.tools.logging :as log]
    [clojure.math :refer [PI]]
+   [dungeon-crawler.config :refer [config]]
    [dungeon-crawler.levels :refer [load-level build-floor]]
    [dungeon-crawler.math :as math]
    [dungeon-crawler.shaders :refer [basic-shader view-projection]]
@@ -199,7 +200,7 @@
             (when (and mesh shader-program)
               (sh/with-shader-program shader-program
                 (let [player (get-in game-state [::ecs/entities (:player game-state)])
-                      eye-height 1
+                      eye-height (:eye-height config)
                       [x z] (:position player)
                       {:keys [cell-size-x cell-size-y]} (:level game-state)
                       view (math/compose
