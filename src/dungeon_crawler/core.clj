@@ -5,10 +5,10 @@
    [dungeon-crawler.config :refer [config]]
    [dungeon-crawler.levels :refer [load-level build-floor]]
    [dungeon-crawler.math :as math]
-   [dungeon-crawler.shaders :refer [basic-shader view-projection]]
+   [dungeon-crawler.shaders :refer [basic-shader view-projection-ident]]
    [s-expresso.ecs :as ecs]
    [s-expresso.engine :as eng]
-   [s-expresso.memory :refer [with-heap-allocator]]
+   [s-expresso.memory :as mem]
    [s-expresso.mesh :as m]
    [s-expresso.resource :as res]
    [s-expresso.render :as rnd]
@@ -209,7 +209,13 @@
                              (math/revolve-y (facing->angle (:facing player)))))
                       projection (math/perspective-projection (:fov player) aspect-ratio 0.1 1000)
                       view-proj (math/compose projection view)]
-                  (sh/upload-uniform-matrix4 shader-program (::sh/ident view-projection) view-proj))
+                  (mem/with-stack-allocator
+                    (sh/upload-uniform-matrix4
+                     shader-program view-projection-ident
+                     (.asFloatBuffer
+                      (doto (mem/alloc-bytes (* Float/SIZE 4 4))
+                        (mem/put-into view-proj)
+                        (.flip))))))
                 (m/draw-mesh mesh)))))))
 
 (def render-systems [#'clear-screen #'render-floor])

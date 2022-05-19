@@ -9,6 +9,7 @@
 (c/defparam color "vec3")
 
 (c/defuniform view-projection "mat4")
+(def view-projection-ident (::c/ident view-projection))
 
 (c/defshader vert-source
   {position :in
