@@ -215,15 +215,13 @@
 (def render-systems [#'clear-screen #'render-floor])
 
 (def init-game-state
-  (let [player (ecs/next-entity-id)
-        init-level (load-level "sample_level")]
+  (let [player (ecs/next-entity-id)]
     {::ecs/entities {player {:facing :north
                              :position [11 9]
                              :fov (to-radians 90.0)}}
      ::ecs/systems #'game-systems
      ::ecs/events []
      :player player
-     :level init-level
      ::rnd/systems #'render-systems}))
 
 (def init-render-state
@@ -234,7 +232,7 @@
   []
   (let [window (start-window window-opts)]
     (try (-> window
-             (eng/start-engine init-game-state init-render-state (/ 60))
+             (eng/start-engine (assoc init-game-state :level (load-level "sample_level")) init-render-state (/ 60))
              ;; NOTE(Joshua): start-engine returns a vector of the final game
              ;; state and the final render state. We should free the resources
              ;; in the render state.
