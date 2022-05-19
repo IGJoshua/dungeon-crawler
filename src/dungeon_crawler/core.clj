@@ -244,4 +244,5 @@
   [& args]
   (init)
   (run)
-  (shutdown))
+  (shutdown)
+  (shutdown-agents))
