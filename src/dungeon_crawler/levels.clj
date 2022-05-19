@@ -19,12 +19,12 @@
      (dec (+ origin-y (/ (:cell-size-y config) 2)))]))
 
 (s/def ::tile #{:ground})
-(s/def ::size-x pos-int?)
-(s/def ::size-y pos-int?)
+(s/def ::cell-size-x pos-int?)
+(s/def ::cell-size-y pos-int?)
 (s/def ::cell (s/keys :req-un [::tile]))
 (s/def ::cells (s/map-of vector? ::cell))
-(s/def ::level (s/keys :req-un [::size-x
-                                ::size-y
+(s/def ::level (s/keys :req-un [::cell-size-x
+                                ::cell-size-y
                                 ::cells]))
 
 (defn- read-map
@@ -41,8 +41,13 @@
   (if (contains? @level-map level)
     (get @level-map level)
     (let [data (read-map level)]
-      (swap! level-map assoc level data)
-      data)))
+      (if-let [problems (s/explain-data ::level data)]
+        (do (s/explain-printer problems)
+            (throw (ex-info "Invalid level"
+                            {:level level
+                             :explain-data problems})))
+        (do (swap! level-map assoc level data)
+            data)))))
 
 (defn- build-quad
   [index
