@@ -32,7 +32,7 @@
   (clojure.edn/read (java.io.PushbackReader.
                      (io/reader
                       (io/resource
-                       (str "resources/" map-name ".edn"))))))
+                       (str map-name ".edn"))))))
 
 (defn load-level
   "This function takes in a string `level` and returns a map with all the details from
