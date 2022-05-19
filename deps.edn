@@ -4,7 +4,7 @@
         ch.qos.logback/logback-classic {:mvn/version "1.2.11"}
 
         ht.sr.srasu/s-expresso {:git/url "https://git.sr.ht/~srasu/s-expresso"
-                                :git/sha "5c2251ee126ec54928e27ccf77f55de511f9ad12"}
+                                :git/sha "1c7f0980ffef07a8ec9eb2667d49f77b3ed5c9ce"}
         io.github.IGJoshua/cljsl {:git/sha "bfa687967b0317c0d1c093296fc48dc42a0a53a8"}
 
         net.mikera/core.matrix {:mvn/version "0.62.0"}
