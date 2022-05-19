@@ -203,9 +203,10 @@
                       eye-height (:eye-height config)
                       [x z] (:position player)
                       {:keys [cell-size-x cell-size-y]} (:level game-state)
-                      view (math/compose
-                            (math/translation (* cell-size-x x) eye-height (* cell-size-y z))
-                            (math/revolve-y (facing->angle (:facing player))))
+                      view (math/inverse
+                            (math/compose
+                             (math/translation (* cell-size-x x) eye-height (* cell-size-y z))
+                             (math/revolve-y (facing->angle (:facing player)))))
                       projection (math/perspective-projection (:fov player) aspect-ratio 0.1 1000)
                       view-proj (math/compose projection view)]
                   (sh/upload-uniform-matrix4 shader-program (::sh/ident view-projection) view-proj))
