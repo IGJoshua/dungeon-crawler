@@ -1,7 +1,7 @@
 (ns dungeon-crawler.core
   (:require
    [clojure.tools.logging :as log]
-   [clojure.math :refer [PI]]
+   [clojure.math :refer [PI to-radians]]
    [dungeon-crawler.config :refer [config]]
    [dungeon-crawler.levels :refer [load-level build-floor]]
    [dungeon-crawler.math :as math]
@@ -218,7 +218,8 @@
   (let [player (ecs/next-entity-id)
         init-level (load-level "sample_level")]
     {::ecs/entities {player {:facing :north
-                             :position [11 9]}}
+                             :position [11 9]
+                             :fov (to-radians 90.0)}}
      ::ecs/systems #'game-systems
      ::ecs/events []
      :player player
