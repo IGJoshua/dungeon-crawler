@@ -61,6 +61,19 @@
                 {:pos [x 0.0 (+ y y')]}
                 {:pos [(+ x x') 0.0 (+ y y')]}]}))
 
+(defn- wall?
+  "Returns whether there is a tile in the adjacent space, based on your `spacing`.
+  Returns the new location if there is one, or nil."
+  [level facing [x y]]
+  (let [diff (facing {:north [0 1]
+                      :south [0 -1]
+                      :east [1 0]
+                      :west [-1 0]})
+        new-tile [(+ x (first diff))
+                  (+ y (second diff))]]
+    (when-not (get (:cells level) new-tile)
+      [[x y] facing])))
+
 (defn build-floor
   "This function takes a `level` and returns a map containing the vertices
   and layouts for that level's floor."
@@ -79,3 +92,13 @@
                    (update :vertices #(apply conj % (:position q)))
                    (update :indices #(apply conj % (:layout q))))
                (dissoc l [x y]))))))
+
+(defn build-walls
+  [level]
+  (let [walls (reduce (fn [results [k _v]] (apply conj results (vector (wall? level :north k)
+                                                                       (wall? level :east k)
+                                                                       (wall? level :west k)
+                                                                       (wall? level :south k))))
+                      []
+                   (:cells level))]
+    (filter seq walls)))
