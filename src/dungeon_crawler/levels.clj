@@ -64,7 +64,7 @@
 (defn- wall?
   "Returns whether there is a tile in the adjacent space, based on your `spacing`.
   Returns the new location if there is one, or nil."
-  [level facing [x y]]
+  [level [x y] facing]
   (let [diff (facing {:north [0 1]
                       :south [0 -1]
                       :east [1 0]
@@ -94,11 +94,10 @@
                (dissoc l [x y]))))))
 
 (defn build-walls
+  "Returns a seq of `[position facing]` for each wall in the level."
   [level]
-  (let [walls (reduce (fn [results [k _v]] (apply conj results (vector (wall? level :north k)
-                                                                       (wall? level :east k)
-                                                                       (wall? level :west k)
-                                                                       (wall? level :south k))))
-                      []
-                   (:cells level))]
-    (filter seq walls)))
+  (->> (:cells level)
+       (reduce (fn [results [k _v]]
+                 (let [w (partial wall? level k)]
+                   (conj results (w :north) (w :east) (w :west) (w :south)))))
+       (filter seq)))
