@@ -173,7 +173,7 @@
        (GL45/glClear (bit-or GL45/GL_COLOR_BUFFER_BIT GL45/GL_DEPTH_BUFFER_BIT))))))
 
 (def floor-mesh-layout
-  {:buffer-layouts [{:attrib-layouts [{:name :pos
+  {:vertex-layouts [{:attrib-layouts [{:name :pos
                                        :type :float
                                        :count 3}]}]
    :element-type :triangles
