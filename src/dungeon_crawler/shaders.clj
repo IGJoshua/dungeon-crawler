@@ -5,7 +5,8 @@
   (:require [cljsl.compiler :as c]
             [s-expresso.shader :as sh]))
 
-(c/defparam position "vec3")
+(c/defparam position "vec3"
+  :layout {"location" 0})
 (c/defparam color "vec3")
 
 (c/defuniform view-projection "mat4")
