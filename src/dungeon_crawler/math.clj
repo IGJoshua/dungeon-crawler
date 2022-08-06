@@ -9,6 +9,8 @@
 
 (def inverse mat/inverse)
 
+(def eseq mat/eseq)
+
 (defn translation
   ([pos]
    (let [ret (mat/clone (mat/identity-matrix 4))]
