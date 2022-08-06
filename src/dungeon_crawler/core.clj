@@ -1,5 +1,6 @@
 (ns dungeon-crawler.core
   (:require
+   [clojure.core.matrix :as mat]
    [clojure.tools.logging :as log]
    [clojure.math :refer [PI to-radians]]
    [dungeon-crawler.config :refer [config]]
@@ -208,7 +209,7 @@
                              (math/translation (* cell-size-x x) eye-height (* cell-size-y z))
                              (math/revolve-y (facing->angle (:facing player)))))
                       projection (math/perspective-projection (:fov player) aspect-ratio 0.1 1000)
-                      view-proj (math/compose projection view)]
+                      view-proj (mat/transpose (math/compose projection view))]
                   (mem/with-stack-allocator
                     (sh/upload-uniform-matrix4
                      shader-program view-projection-ident
