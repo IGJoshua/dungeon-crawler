@@ -214,8 +214,8 @@
                     (sh/upload-uniform-matrix4
                      shader-program view-projection-ident
                      (.asFloatBuffer
-                      (doto (mem/alloc-bytes (* Float/SIZE 1/8 4 4))
-                        (mem/put-seq (map float (clojure.core.matrix/as-vector view-proj)))
+                      (doto (mem/alloc-bytes (* Float/BYTES 4 4))
+                        (mem/put-seq (map float (mat/eseq view-proj)))
                         (.flip))))))
                 (m/draw-mesh mesh)))))))
 
